@@ -4,6 +4,7 @@ import MetricsHeader    from './components/MetricsHeader';
 import CategoryFilter   from './components/CategoryFilter';
 import EventTable       from './components/EventTable';
 import AuditLogDrawer   from './components/AuditLogDrawer';
+import BatchSimulator   from './components/BatchSimulator';
 
 export default function App() {
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -83,13 +84,13 @@ export default function App() {
           }} />
         <div className="mx-auto max-w-screen-2xl px-5 py-8">
           <p className="text-xs font-semibold uppercase tracking-widest text-blue-400/70 mb-1">
-            Module 1 — Live Dashboard
+            Modules 1–4 — Live Dashboard
           </p>
           <h2 className="text-2xl font-extrabold tracking-tight text-slate-100 mb-1">
             Revenue Recovery Command Centre
           </h2>
           <p className="text-sm text-slate-500 max-w-xl">
-            Monitor every payment failure in real time. Inspect AI-driven recovery interventions, track reclaimed revenue, and drive down churn—all from one place.
+            Monitor failures, trigger individual or bulk AI recovery, inspect every guardrail decision, and reclaim revenue at scale — all in real time.
           </p>
         </div>
       </div>
@@ -99,6 +100,12 @@ export default function App() {
 
         {/* KPI Metrics */}
         <MetricsHeader onRefresh={handleRefresh} lastRefreshed={lastRefreshed} />
+
+        {/* Divider */}
+        <div className="h-px bg-slate-800" />
+
+        {/* ── Batch Simulation Engine ─────────────────────────────────── */}
+        <BatchSimulator onBatchComplete={handleRefresh} />
 
         {/* Divider */}
         <div className="h-px bg-slate-800" />
