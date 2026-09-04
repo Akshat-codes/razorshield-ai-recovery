@@ -31,7 +31,8 @@ const CATEGORY_BADGE = {
 const STATUS_BADGE = {
   FAILED:     { label: 'Failed',     bg: 'rgba(239,68,68,0.15)',  color: '#f87171', border: 'rgba(239,68,68,0.3)',  dot: '#ef4444' },
   RECOVERED:  { label: 'Recovered',  bg: 'rgba(52,211,153,0.15)', color: '#34d399', border: 'rgba(52,211,153,0.3)', dot: '#10b981' },
-  PROCESSING: { label: 'Processing', bg: 'rgba(251,191,36,0.15)', color: '#fbbf24', border: 'rgba(251,191,36,0.3)', dot: '#f59e0b' },
+  PROCESSING: { label: 'Scheduled',  bg: 'rgba(251,191,36,0.15)', color: '#fbbf24', border: 'rgba(251,191,36,0.3)', dot: '#f59e0b' },
+  BLOCKED:    { label: 'Blocked',    bg: 'rgba(244,63,94,0.15)',  color: '#fb7185', border: 'rgba(244,63,94,0.3)',  dot: '#f43f5e' },
 };
 
 function CategoryBadge({ category }) {
@@ -98,7 +99,7 @@ function SkeletonRow() {
   return (
     <tr>
       {[160, 100, 80, 90, 90, 80, 110, 80, 100].map((w, i) => (
-        <td key={i} className="px-5 py-4"><div className="h-4 rounded shimmer" style={{ width: w }} /></td>
+        <td key={i} className="px-6 py-4"><div className="h-4 rounded shimmer" style={{ width: w }} /></td>
       ))}
     </tr>
   );
@@ -247,13 +248,13 @@ export default function EventTable({ category, onInspect, onCountsChange, lastRe
 
   return (
     <>
-      <div className="rounded-xl border border-slate-800 bg-slate-900 overflow-hidden">
+      <div className="rounded-xl border border-slate-800 bg-[#111827] shadow-sm overflow-hidden p-6">
 
         {/* Toolbar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 px-5 py-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
           <div>
-            <h2 className="text-sm font-semibold text-slate-200">Payment Failure Events</h2>
-            <p className="mt-0.5 text-xs text-slate-500">
+            <h2 className="text-lg font-semibold text-slate-200">Payment Failure Events</h2>
+            <p className="mt-1 text-sm text-slate-400">
               {loading ? 'Loading…' : `${displayEvents.length} of ${events.length} events shown`}
             </p>
           </div>
@@ -282,7 +283,7 @@ export default function EventTable({ category, onInspect, onCountsChange, lastRe
                 {COLUMNS.map(({ key, label, sortable }) => (
                   <th key={key}
                     onClick={sortable ? () => handleSort(key) : undefined}
-                    className={`px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500 whitespace-nowrap ${sortable ? 'cursor-pointer select-none hover:text-slate-300' : ''}`}>
+                    className={`px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-400 whitespace-nowrap ${sortable ? 'cursor-pointer select-none hover:text-slate-200' : ''}`}>
                     <span className="inline-flex items-center gap-1">
                       {label}
                       {sortable && <SortIcon field={key} sortField={sortField} sortDir={sortDir} />}
@@ -316,46 +317,46 @@ export default function EventTable({ category, onInspect, onCountsChange, lastRe
                     <tr key={ev.id} className={`table-row-hover transition-colors ${localStatus === 'RECOVERED' ? 'bg-emerald-950/10' : ''}`}>
 
                       {/* Customer */}
-                      <td className="px-5 py-3.5">
-                        <p className="font-medium text-slate-200 truncate max-w-[160px]" title={ev.customer_name}>{ev.customer_name}</p>
-                        <p className="mt-0.5 text-[11px] text-slate-500 truncate max-w-[160px]" title={ev.customer_email}>{ev.customer_email}</p>
+                      <td className="px-6 py-4">
+                        <p className="text-sm font-medium text-slate-200 truncate max-w-[160px]" title={ev.customer_name}>{ev.customer_name}</p>
+                        <p className="mt-1 text-xs text-slate-400 truncate max-w-[160px]" title={ev.customer_email}>{ev.customer_email}</p>
                       </td>
 
                       {/* Category */}
-                      <td className="px-5 py-3.5"><CategoryBadge category={ev.category} /></td>
+                      <td className="px-6 py-4"><CategoryBadge category={ev.category} /></td>
 
                       {/* Amount */}
-                      <td className="px-5 py-3.5 font-mono font-semibold text-slate-200 whitespace-nowrap">{formatINR(ev.amount)}</td>
+                      <td className="px-6 py-4 text-sm font-mono font-semibold text-slate-200 whitespace-nowrap">{formatINR(ev.amount)}</td>
 
                       {/* Payment Method */}
-                      <td className="px-5 py-3.5">
-                        <span className="rounded bg-slate-800 px-2 py-0.5 text-[11px] font-mono text-slate-400 border border-slate-700">{ev.payment_method}</span>
+                      <td className="px-6 py-4">
+                        <span className="rounded bg-slate-800 px-2.5 py-1 text-xs font-mono text-slate-300 border border-slate-700">{ev.payment_method}</span>
                       </td>
 
                       {/* Failure Code */}
-                      <td className="px-5 py-3.5">
-                        <span className="rounded bg-red-950/50 px-2 py-0.5 text-[11px] font-mono text-red-400 border border-red-900/40">{ev.failure_code}</span>
+                      <td className="px-6 py-4">
+                        <span className="rounded bg-red-950/50 px-2.5 py-1 text-xs font-mono text-red-400 border border-red-900/40">{ev.failure_code}</span>
                       </td>
 
                       {/* Status (uses local override for instant feedback) */}
-                      <td className="px-5 py-3.5"><StatusBadge status={localStatus} /></td>
+                      <td className="px-6 py-4"><StatusBadge status={localStatus} /></td>
 
                       {/* Date */}
-                      <td className="px-5 py-3.5 text-[11px] text-slate-500 whitespace-nowrap">{formatDate(ev.created_at)}</td>
+                      <td className="px-6 py-4 text-xs text-slate-400 whitespace-nowrap">{formatDate(ev.created_at)}</td>
 
                       {/* Inspect Button */}
-                      <td className="px-5 py-3.5">
+                      <td className="px-6 py-4">
                         <button
                           id={`inspect-${ev.id}`}
                           onClick={() => onInspect(ev.id)}
-                          className="inline-flex items-center gap-1.5 rounded-lg border border-blue-500/30 bg-blue-500/10 px-3 py-1.5 text-[11px] font-semibold text-blue-400 transition hover:bg-blue-500/20 hover:border-blue-400 hover:text-blue-300 active:scale-95 whitespace-nowrap">
-                          <FileSearch size={12} strokeWidth={2.5} />
+                          className="inline-flex items-center gap-1.5 rounded-lg border border-blue-500/30 bg-blue-500/10 px-3 py-1.5 text-xs font-semibold text-blue-400 transition hover:bg-blue-500/20 hover:border-blue-400 hover:text-blue-300 active:scale-95 whitespace-nowrap">
+                          <FileSearch size={14} strokeWidth={2.5} />
                           Inspect
                         </button>
                       </td>
 
                       {/* Recover via AI Button */}
-                      <td className="px-5 py-3.5">
+                      <td className="px-6 py-4">
                         {localStatus === 'RECOVERED' ? (
                           <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-500">
                             <CheckCircle2 size={13} strokeWidth={2.5} />
@@ -396,7 +397,7 @@ export default function EventTable({ category, onInspect, onCountsChange, lastRe
         </div>
 
         {!loading && displayEvents.length > 0 && (
-          <div className="border-t border-slate-800 px-5 py-3 text-[11px] text-slate-600">
+          <div className="border-t border-slate-800 pt-4 mt-4 text-sm text-slate-400">
             Showing {displayEvents.length} event{displayEvents.length !== 1 ? 's' : ''}{search && ` matching "${search}"`}
           </div>
         )}

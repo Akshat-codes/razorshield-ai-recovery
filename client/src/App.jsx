@@ -1,16 +1,36 @@
 import React, { useState, useCallback } from 'react';
-import { Shield, Cpu, Github, Activity } from 'lucide-react';
-import MetricsHeader    from './components/MetricsHeader';
-import CategoryFilter   from './components/CategoryFilter';
-import EventTable       from './components/EventTable';
-import AuditLogDrawer   from './components/AuditLogDrawer';
-import BatchSimulator   from './components/BatchSimulator';
+import { Shield, Cpu, Activity, BarChart3, LayoutDashboard, Github } from 'lucide-react';
+import MetricsHeader  from './components/MetricsHeader';
+import CategoryFilter from './components/CategoryFilter';
+import EventTable     from './components/EventTable';
+import BatchSimulator from './components/BatchSimulator';
+import AnalyticsPanel from './components/AnalyticsPanel';
+import AuditModal     from './components/AuditModal';
+
+// ─── Nav tab config ────────────────────────────────────────────────────────────
+
+const VIEWS = [
+  { id: 'dashboard', label: 'Command Centre',     Icon: LayoutDashboard },
+  { id: 'analytics', label: 'Analytics & Policy', Icon: BarChart3       },
+];
+
+// ─── Styles (Razorpay palette, no glow) ──────────────────────────────────────
+
+const S = {
+  bg:         '#0b0f19',
+  surface:    '#111827',
+  border:     '#1e293b',
+  textMuted:  '#64748b',
+  textSub:    '#94a3b8',
+  blue:       '#3b82f6',
+};
 
 export default function App() {
+  const [view,             setView]             = useState('dashboard');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [inspectId,        setInspectId]        = useState(null);
-  const [counts,           setCounts]            = useState({});
-  const [lastRefreshed,    setLastRefreshed]     = useState(Date.now());
+  const [counts,           setCounts]           = useState({});
+  const [lastRefreshed,    setLastRefreshed]    = useState(Date.now());
 
   const handleRefresh  = useCallback(() => setLastRefreshed(Date.now()), []);
   const handleInspect  = useCallback((id) => setInspectId(id), []);
@@ -18,128 +38,142 @@ export default function App() {
   const handleCounts   = useCallback((c) => setCounts(c), []);
 
   return (
-    <div className="min-h-screen" style={{ background: '#0b1120' }}>
+    <div className="min-h-screen" style={{ background: S.bg }}>
 
-      {/* ── Top Navigation Bar ─────────────────────────────────────────── */}
-      <header className="sticky top-0 z-30 border-b border-slate-800/80 backdrop-blur-md"
-        style={{ background: 'rgba(11,17,32,0.92)' }}>
-        <div className="mx-auto flex max-w-screen-2xl items-center justify-between px-5 py-3.5">
+      {/* ─────────────────────────── Top Header ──────────────────────────── */}
+      <header
+        className="sticky top-0 z-30 border-b"
+        style={{ background: 'rgba(11,15,25,0.96)', borderColor: S.border, backdropFilter: 'blur(8px)' }}
+      >
+        {/* Brand row */}
+        <div className="mx-auto flex max-w-screen-2xl items-center justify-between px-5 py-3">
 
-          {/* Brand */}
+          {/* Logo + brand */}
           <div className="flex items-center gap-3">
-            <div className="relative flex h-9 w-9 items-center justify-center rounded-xl"
-              style={{ background: 'linear-gradient(135deg,#3b82f6,#06b6d4)', boxShadow: '0 0 18px rgba(59,130,246,0.4)' }}>
-              <Shield size={18} className="text-white" strokeWidth={2.5} />
-              <span className="absolute -top-1 -right-1 flex h-3 w-3 items-center justify-center">
-                <span className="absolute h-full w-full rounded-full bg-cyan-400 opacity-75 animate-ping" />
-                <span className="h-2 w-2 rounded-full bg-cyan-400" />
-              </span>
+            <div
+              className="flex h-8 w-8 items-center justify-center rounded"
+              style={{ background: '#1e3a5f', border: '1px solid #2563eb' }}
+            >
+              <Shield size={16} className="text-blue-400" strokeWidth={2.5} />
             </div>
             <div>
-              <h1 className="text-base font-extrabold tracking-tight">
+              <h1 className="text-[15px] font-bold tracking-tight">
                 <span className="gradient-text">RazorShield AI</span>
               </h1>
-              <p className="text-[10px] text-slate-500 leading-none mt-0.5">
-                Autonomous Revenue Recovery Engine
+              <p className="text-[10px] leading-none" style={{ color: S.textMuted }}>
+                Autonomous Revenue Recovery · Razorpay Buildathon Track 03
               </p>
             </div>
           </div>
 
-          {/* Center badge */}
-          <div className="hidden md:flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/60 px-3 py-1.5">
-            <Cpu size={12} className="text-blue-400" strokeWidth={2.5} />
-            <span className="text-[11px] font-semibold text-slate-400">
-              Razorpay Buildathon — Track 03
-            </span>
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          </div>
-
-          {/* Status indicator */}
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-slate-500">
-              <Activity size={12} className="text-emerald-400" strokeWidth={2.5} />
-              <span>API Connected</span>
+          {/* Right side */}
+          <div className="flex items-center gap-4">
+            {/* Gemini mode tag */}
+            <div
+              className="hidden sm:flex items-center gap-1.5 rounded px-2.5 py-1 text-[11px] font-medium"
+              style={{ background: '#0d2137', border: '1px solid #1d4ed8', color: '#93c5fd' }}
+            >
+              <Cpu size={11} strokeWidth={2.5} />
+              Gemini AI
             </div>
+
+            {/* API status */}
+            <div className="hidden md:flex items-center gap-1.5 text-[11px]" style={{ color: S.textMuted }}>
+              <Activity size={11} className="text-emerald-500" strokeWidth={2.5} />
+              Live
+            </div>
+
+            {/* GitHub */}
             <a
               href="https://github.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-700 bg-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-600 transition"
+              className="flex h-7 w-7 items-center justify-center rounded border transition hover:border-slate-600 hover:text-slate-300"
+              style={{ borderColor: S.border, color: S.textMuted }}
               aria-label="GitHub"
             >
-              <Github size={15} strokeWidth={2} />
+              <Github size={14} strokeWidth={2} />
             </a>
           </div>
         </div>
+
+        {/* ── View navigation tabs (Razorpay dashboard style) ── */}
+        <div
+          className="mx-auto flex max-w-screen-2xl items-end gap-0 px-5"
+          role="tablist"
+          aria-label="Application views"
+        >
+          {VIEWS.map(({ id, label, Icon }) => {
+            const active = view === id;
+            return (
+              <button
+                key={id}
+                role="tab"
+                aria-selected={active}
+                onClick={() => setView(id)}
+                className="flex items-center gap-2 border-b-2 px-4 py-2.5 text-[13px] font-medium transition-colors duration-150 focus:outline-none"
+                style={{
+                  borderBottomColor: active ? S.blue : 'transparent',
+                  color:             active ? '#e2e8f0' : S.textMuted,
+                  background:        'transparent',
+                }}
+              >
+                <Icon size={14} strokeWidth={2} style={{ color: active ? S.blue : S.textMuted }} />
+                {label}
+              </button>
+            );
+          })}
+        </div>
       </header>
 
-      {/* ── Hero Banner ─────────────────────────────────────────────────── */}
-      <div className="relative overflow-hidden border-b border-slate-800/40"
-        style={{ background: 'linear-gradient(180deg, rgba(59,130,246,0.06) 0%, transparent 100%)' }}>
-        {/* Background grid decoration */}
-        <div className="pointer-events-none absolute inset-0 opacity-5"
-          style={{
-            backgroundImage: 'linear-gradient(rgba(59,130,246,0.4) 1px, transparent 1px), linear-gradient(90deg,rgba(59,130,246,0.4) 1px,transparent 1px)',
-            backgroundSize: '48px 48px',
-          }} />
-        <div className="mx-auto max-w-screen-2xl px-5 py-8">
-          <p className="text-xs font-semibold uppercase tracking-widest text-blue-400/70 mb-1">
-            Modules 1–4 — Live Dashboard
-          </p>
-          <h2 className="text-2xl font-extrabold tracking-tight text-slate-100 mb-1">
-            Revenue Recovery Command Centre
-          </h2>
-          <p className="text-sm text-slate-500 max-w-xl">
-            Monitor failures, trigger individual or bulk AI recovery, inspect every guardrail decision, and reclaim revenue at scale — all in real time.
-          </p>
-        </div>
-      </div>
+      {/* ─────────────────────────── Main Content ────────────────────────── */}
+      <main className="w-full px-6 py-6 space-y-6">
 
-      {/* ── Main Content ────────────────────────────────────────────────── */}
-      <main className="mx-auto max-w-screen-2xl px-5 py-8 space-y-6">
+        {view === 'dashboard' && (
+          <div className="flex flex-col gap-6">
+            {/* ── KPI Cards ── */}
+            <MetricsHeader onRefresh={handleRefresh} lastRefreshed={lastRefreshed} />
 
-        {/* KPI Metrics */}
-        <MetricsHeader onRefresh={handleRefresh} lastRefreshed={lastRefreshed} />
+            {/* ── Batch Simulator ── */}
+            <BatchSimulator onBatchComplete={handleRefresh} />
 
-        {/* Divider */}
-        <div className="h-px bg-slate-800" />
+            {/* ── Filter Bar ── */}
+            <div className="flex flex-wrap items-center gap-3">
+              <CategoryFilter
+                selected={selectedCategory}
+                onChange={setSelectedCategory}
+                counts={counts}
+              />
+            </div>
 
-        {/* ── Batch Simulation Engine ─────────────────────────────────── */}
-        <BatchSimulator onBatchComplete={handleRefresh} />
+            {/* ── Events Table ── */}
+            <EventTable
+              category={selectedCategory}
+              onInspect={handleInspect}
+              onCountsChange={handleCounts}
+              lastRefreshed={lastRefreshed}
+              onRecoverSuccess={handleRefresh}
+            />
+          </div>
+        )}
 
-        {/* Divider */}
-        <div className="h-px bg-slate-800" />
-
-        {/* Filter Bar */}
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <CategoryFilter
-            selected={selectedCategory}
-            onChange={setSelectedCategory}
-            counts={counts}
-          />
-        </div>
-
-        {/* Events Table */}
-        <EventTable
-          category={selectedCategory}
-          onInspect={handleInspect}
-          onCountsChange={handleCounts}
-          lastRefreshed={lastRefreshed}
-          onRecoverSuccess={handleRefresh}
-        />
+        {view === 'analytics' && (
+          <AnalyticsPanel lastRefreshed={lastRefreshed} />
+        )}
       </main>
 
-      {/* ── Footer ──────────────────────────────────────────────────────── */}
-      <footer className="border-t border-slate-800/60 px-5 py-5 text-center text-xs text-slate-700">
-        <p>
-          RazorShield AI — Built for{' '}
-          <span className="text-blue-500 font-semibold">Razorpay Buildathon 2026</span>
-          {' '}· Track 03: AI-Powered Revenue Recovery Engine
-        </p>
+      {/* ─────────────────────────── Footer ──────────────────────────────── */}
+      <footer
+        className="border-t px-5 py-4 text-center text-[11px]"
+        style={{ borderColor: S.border, color: '#334155' }}
+      >
+        RazorShield AI — Built for{' '}
+        <span style={{ color: S.blue, fontWeight: 600 }}>Razorpay Buildathon 2026</span>
+        {' '}· Track 03: AI-Powered Revenue Recovery Engine
       </footer>
 
-      {/* ── Audit Log Drawer (Portal) ─────────────────────────────────── */}
-      <AuditLogDrawer eventId={inspectId} onClose={handleClose} />
+      {/* ─────────────────────────── Audit Modal ─────────────────────────── */}
+      <AuditModal eventId={inspectId} onClose={handleClose} />
     </div>
   );
 }

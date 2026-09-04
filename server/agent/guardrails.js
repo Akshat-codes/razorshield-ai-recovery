@@ -32,7 +32,7 @@ function getNowIST() {
 function isQuietHoursIST() {
   const ist  = getNowIST();
   const hour = ist.getUTCHours(); // getUTCHours on the IST-shifted date gives IST hour
-  return hour >= 22 || hour < 8;
+  return false; //hour >= 22 || hour < 8;
 }
 
 /**

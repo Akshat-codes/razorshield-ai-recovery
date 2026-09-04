@@ -153,16 +153,15 @@ function ResultRow({ result, index }) {
 
 function SummaryCard({ icon: Icon, label, value, color, glow }) {
   return (
-    <div className="flex flex-col gap-1.5 rounded-xl border border-slate-800 bg-slate-900/70 px-4 py-3"
-      style={{ boxShadow: `0 0 0 1px ${glow}15` }}>
+    <div className="flex flex-col gap-2 rounded-xl border border-slate-800 bg-[#0B0F19] p-4 shadow-sm">
       <div className="flex items-center gap-2">
-        <div className="flex h-6 w-6 items-center justify-center rounded-md"
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg"
           style={{ background: `${glow}18` }}>
-          <Icon size={12} style={{ color: glow }} strokeWidth={2.5} />
+          <Icon size={16} style={{ color: glow }} strokeWidth={2.5} />
         </div>
-        <span className="text-[10px] uppercase tracking-widest text-slate-600">{label}</span>
+        <span className="text-xs uppercase tracking-widest text-slate-400">{label}</span>
       </div>
-      <p className="text-lg font-bold tracking-tight" style={{ color }}>{value}</p>
+      <p className="text-xl font-bold tracking-tight mt-1" style={{ color }}>{value}</p>
     </div>
   );
 }
@@ -259,20 +258,18 @@ export default function BatchSimulator({ onBatchComplete }) {
   const progressColor = isError ? '#ef4444' : isDone ? '#10b981' : '#3b82f6';
 
   return (
-    <div className="rounded-xl border border-slate-700/60 bg-slate-900 overflow-hidden"
-      style={{ boxShadow: '0 0 0 1px rgba(59,130,246,0.08), 0 4px 32px rgba(0,0,0,0.4)' }}>
+    <div className="rounded-xl border border-slate-800 bg-[#111827] shadow-sm overflow-hidden p-6">
 
       {/* ── Header ── */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 px-5 py-4"
-        style={{ background: 'linear-gradient(90deg, rgba(59,130,246,0.06), transparent)' }}>
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl"
             style={{ background: 'linear-gradient(135deg,#3b82f6,#06b6d4)', boxShadow: '0 0 16px rgba(59,130,246,0.3)' }}>
             <BarChart3 size={18} className="text-white" strokeWidth={2.5} />
           </div>
           <div>
-            <h2 className="text-sm font-bold text-slate-100">AI Batch Recovery Engine</h2>
-            <p className="text-[11px] text-slate-500 mt-0.5">
+            <h2 className="text-lg font-bold text-slate-100">AI Batch Recovery Engine</h2>
+            <p className="text-sm text-slate-400 mt-1">
               Bulk-process all FAILED events through guardrails + LLM pipeline
             </p>
           </div>
@@ -324,7 +321,7 @@ export default function BatchSimulator({ onBatchComplete }) {
       </div>
 
       {/* ── Progress Section ── */}
-      <div className="px-5 py-4 space-y-3">
+      <div className="space-y-4 mb-6">
 
         {/* Progress bar */}
         <div className="space-y-1.5">
@@ -364,7 +361,7 @@ export default function BatchSimulator({ onBatchComplete }) {
 
       {/* ── Summary KPIs (shown after run) ── */}
       {isDone && summary && (
-        <div className="border-t border-slate-800 px-5 pb-5">
+        <div className="border-t border-slate-800 pt-6">
 
           {/* Dry run badge */}
           {summary.dry_run && (
