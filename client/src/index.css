@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', 'Segoe UI', system-ui, sans-serif;
+
+  --color-navy-950: #080e1a;
+  --color-navy-900: #0b1120;
+  --color-navy-800: #0f172a;
+
+  --color-panel-700: #1a2540;
+  --color-panel-600: #1e293b;
+  --color-panel-500: #243047;
+
+  --color-razorblue-600: #2563eb;
+  --color-razorblue-500: #3b82f6;
+  --color-razorblue-400: #60a5fa;
+  --color-razorblue-300: #93c5fd;
+
+  --color-razorcyan-600: #0891b2;
+  --color-razorcyan-500: #06b6d4;
+  --color-razorcyan-400: #22d3ee;
+}
+
+/* ── Base Reset ─────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-navy-900);
+  color: #f1f5f9;
+  font-family: var(--font-sans);
+  min-height: 100vh;
+}
+
+/* ── Scrollbar Styling ──────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--color-navy-800); }
+::-webkit-scrollbar-thumb {
+  background: var(--color-panel-500);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--color-razorblue-600); }
+
+/* ── Drawer Slide-In Animation ──────────────────────── */
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(59,130,246,0); }
+  50%       { box-shadow: 0 0 16px 4px rgba(59,130,246,0.25); }
+}
+
+.animate-slide-in  { animation: slideInRight 0.28s cubic-bezier(0.22,1,0.36,1) both; }
+.animate-fade-in   { animation: fadeIn 0.2s ease both; }
+.animate-pulse-glow { animation: pulseGlow 2.5s ease-in-out infinite; }
+
+/* ── Gradient Text Utility ─────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 60%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Card Hover Glow ───────────────────────────────── */
+.card-hover {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+.card-hover:hover {
+  border-color: rgba(59,130,246,0.4);
+  box-shadow: 0 0 24px rgba(59,130,246,0.12);
+  transform: translateY(-1px);
+}
+
+/* ── Table Row Hover ───────────────────────────────── */
+.table-row-hover {
+  transition: background-color 0.15s ease;
+}
+.table-row-hover:hover { background-color: rgba(30,41,59,0.8); }
+
+/* ── Shimmer Loading ───────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, #1e293b 25%, #243047 50%, #1e293b 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
