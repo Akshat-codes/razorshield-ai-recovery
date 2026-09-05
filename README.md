@@ -1,4 +1,4 @@
-# Resurrect — AI-Powered Revenue Recovery Engine
+# Razorshield — AI-Powered Revenue Recovery Engine
 
 An autonomous, AI-driven revenue recovery engine designed for the Razorpay Buildathon (Track 03). It uses Google Gemini to dynamically analyze failed payment events and generate contextual recovery actions (e.g., localized SMS messages, retry links, or escalation notices) based on the failure category.
 
