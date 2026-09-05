@@ -1,5 +1,5 @@
 # Architecture Overview
-The Resurrect system is designed for high concurrency, fault tolerance, and absolute financial safety. It is partitioned into two primary layers: a React-based client dashboard and an autonomous Node.js recovery agent.
+The Razorshield system is designed for high concurrency, fault tolerance, and absolute financial safety. It is partitioned into two primary layers: a React-based client dashboard and an autonomous Node.js recovery agent.
 
 ## System Workflow Pipeline
 
