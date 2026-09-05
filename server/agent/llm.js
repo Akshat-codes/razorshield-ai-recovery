@@ -70,6 +70,7 @@ Respond ONLY with a valid JSON object matching this schema exactly:
   "message_content": "string",
   "discount_offered": number
 }
+WARNING: DO NOT include any conversational text, markdown formatting, or comments. Output ONLY the raw JSON object.
 `.trim();
 }
 
@@ -81,14 +82,14 @@ Respond ONLY with a valid JSON object matching this schema exactly:
  * @param {string} text
  * @returns {object}
  */
-function parseJSON(text) {
+function parseJSON(rawText) {
   // Strip markdown code fences if present
-  const cleaned = text.replace(/```(?:json)?/gi, '').replace(/```/g, '').trim();
+  let cleanJsonText = rawText.replace(/```json|```/g, "").trim();
 
-  // Extract the first JSON object
-  const match = cleaned.match(/\{[\s\S]*\}/);
+  // Extract the first JSON object to ignore conversational text
+  const match = cleanJsonText.match(/\{[\s\S]*\}/);
   if (!match) throw new Error('No JSON object found in LLM response.');
-
+  
   const parsed = JSON.parse(match[0]);
 
   // Validate required keys
@@ -97,13 +98,19 @@ function parseJSON(text) {
     if (parsed[key] === undefined) throw new Error(`Missing key: ${key}`);
   }
 
+  const rawRisk = parseFloat(parsed.risk_score);
+  const risk = isNaN(rawRisk) ? 0.5 : Math.min(1, Math.max(0, rawRisk));
+  
+  const rawDiscount = parseFloat(parsed.discount_offered);
+  const discount = isNaN(rawDiscount) ? 0 : Math.max(0, rawDiscount);
+
   return {
     failure_category: String(parsed.failure_category),
-    risk_score:       Math.min(1, Math.max(0, Number(parsed.risk_score))),
+    risk_score:       risk,
     chosen_action:    String(parsed.chosen_action),
     reasoning:        String(parsed.reasoning),
     message_content:  String(parsed.message_content),
-    discount_offered: Math.max(0, Number(parsed.discount_offered)),
+    discount_offered: discount,
     rule_applied:     'LLM_GEMINI',
     execution_status: 'SUCCESS',
   };
@@ -125,13 +132,18 @@ async function callGemini(prompt) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      safetySettings: [
+        { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+        { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+        { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+        { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+      ],
       generationConfig: {
-        temperature:      0.4,
-        maxOutputTokens:  800,
+        temperature:      0.1,
         responseMimeType: 'application/json',
       },
     }),
-    signal: AbortSignal.timeout(30000), // 30 s timeout
+    signal: AbortSignal.timeout(60000), // 60 s timeout
   });
 
   if (!res.ok) {
