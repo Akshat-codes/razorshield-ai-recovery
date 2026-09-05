@@ -1,6 +1,6 @@
 # Design Principles & Aesthetics
 
-The Resurrect project was built from the ground up to solve the enterprise trust problem with AI. Our design philosophy bridges the gap between cutting-edge LLM capabilities and strict financial compliance.
+The Razorshield project was built from the ground up to solve the enterprise trust problem with AI. Our design philosophy bridges the gap between cutting-edge LLM capabilities and strict financial compliance.
 
 ## System Design Philosophy
 
