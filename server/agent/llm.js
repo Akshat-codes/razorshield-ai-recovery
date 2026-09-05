@@ -118,7 +118,7 @@ function parseJSON(text) {
  * @returns {Promise<object>}
  */
 async function callGemini(prompt) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${GEMINI_API_KEY}`;
 
   const res = await fetch(url, {
     method:  'POST',
@@ -131,7 +131,7 @@ async function callGemini(prompt) {
         responseMimeType: 'application/json',
       },
     }),
-    signal: AbortSignal.timeout(15000), // 15 s timeout
+    signal: AbortSignal.timeout(30000), // 30 s timeout
   });
 
   if (!res.ok) {
@@ -172,7 +172,7 @@ async function callOpenAI(prompt) {
         { role: 'user',   content: prompt },
       ],
     }),
-    signal: AbortSignal.timeout(15000),
+    signal: AbortSignal.timeout(30000),
   });
 
   if (!res.ok) {
